@@ -133,6 +133,10 @@ public abstract class IRScope implements ParseResult {
 
     private IRManager manager;
 
+    private TemporaryVariable yieldClosureVariable;
+
+    private TemporaryVariable implicitClosureVariable;
+
     // Used by cloning code
     protected IRScope(IRScope s, IRScope lexicalParent) {
         this.lexicalParent = lexicalParent;
@@ -190,7 +194,6 @@ public abstract class IRScope implements ParseResult {
         flags.remove(HAS_EXPLICIT_CALL_PROTOCOL);
         flags.remove(HAS_LOOPS);
         flags.remove(HAS_NONLOCAL_RETURNS);
-        flags.remove(HAS_UNUSED_IMPLICIT_BLOCK_ARG);
         flags.remove(RECEIVES_KEYWORD_ARGS);
 
         // These flags are true by default!
@@ -894,6 +897,22 @@ public abstract class IRScope implements ParseResult {
 
     public void setTemporaryVariableCount(int count) {
         temporaryVariableIndex = count + 1;
+    }
+
+    public TemporaryVariable getYieldClosureVariable() {
+        if (yieldClosureVariable == null) {
+            return yieldClosureVariable = createTemporaryVariable();
+        }
+
+        return yieldClosureVariable;
+    }
+
+    public TemporaryVariable getImplicitClosureVariable() {
+        if (implicitClosureVariable == null) {
+            return implicitClosureVariable = createTemporaryVariable();
+        }
+
+        return implicitClosureVariable;
     }
 
     public TemporaryLocalVariable getNewUnboxedVariable(Class type) {

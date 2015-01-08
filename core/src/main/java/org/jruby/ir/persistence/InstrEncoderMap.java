@@ -92,7 +92,7 @@ public class InstrEncoderMap {
             case PUT_GLOBAL_VAR: encodePutGlobalVarInstr((PutGlobalVarInstr) instr); break;
             case RAISE_ARGUMENT_ERROR: encodeRaiseArgumentErrorInstr((RaiseArgumentErrorInstr) instr); break;
             case RECORD_END_BLOCK: encodeRecordEndBlockInstr((RecordEndBlockInstr) instr); break;
-            case RECV_CLOSURE: /* no state */ break;
+            case REIFY_CLOSURE: encodeReifyClosureInstr((ReifyClosureInstr) instr); break;
             case RECV_RUBY_EXC: encodeReceiveRubyExceptionInstr((ReceiveRubyExceptionInstr) instr); break;
             case RECV_JRUBY_EXC: encodeReceiveJRubyExceptionInstr((ReceiveJRubyExceptionInstr) instr); break;
             case RECV_KW_ARG: encodeReceiveKeywordArgInstr((ReceiveKeywordArgInstr) instr); break;
@@ -398,6 +398,11 @@ public class InstrEncoderMap {
     private void encodeRecordEndBlockInstr(RecordEndBlockInstr instr) {
         e.encode(instr.getDeclaringScope());
         e.encode(instr.getEndBlockClosure());
+    }
+
+    private void encodeReifyClosureInstr(ReifyClosureInstr instr) {
+        e.encode(instr.getSource());
+        e.encode(instr.getResult());
     }
 
     private void encodeReceiveRubyExceptionInstr(ReceiveRubyExceptionInstr instr) { }

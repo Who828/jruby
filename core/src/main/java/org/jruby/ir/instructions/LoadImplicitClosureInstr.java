@@ -1,6 +1,5 @@
 package org.jruby.ir.instructions;
 
-import org.jruby.ir.IRFlags;
 import org.jruby.ir.IRScope;
 import org.jruby.ir.IRVisitor;
 import org.jruby.ir.Operation;
@@ -10,15 +9,20 @@ import org.jruby.ir.operands.WrappedIRClosure;
 import org.jruby.ir.transformations.inlining.CloneInfo;
 import org.jruby.ir.transformations.inlining.InlineCloneInfo;
 import org.jruby.ir.transformations.inlining.SimpleCloneInfo;
+import org.jruby.parser.StaticScope;
+import org.jruby.runtime.Block;
+import org.jruby.runtime.DynamicScope;
+import org.jruby.runtime.ThreadContext;
+import org.jruby.runtime.builtin.IRubyObject;
 
 /* Receive the closure argument (either implicit or explicit in Ruby source code) */
-public class ReceiveClosureInstr extends Instr implements ResultInstr, FixedArityInstr {
+public class LoadImplicitClosureInstr extends Instr implements ResultInstr, FixedArityInstr {
     private Variable result;
 
-    public ReceiveClosureInstr(Variable result) {
-        super(Operation.RECV_CLOSURE);
+    public LoadImplicitClosureInstr(Variable result) {
+        super(Operation.LOAD_IMPLICT_CLOSURE);
 
-        assert result != null: "ReceiveClosureInstr result is null";
+        assert result != null: "LoadImplicitClosureInstr result is null";
 
         this.result = result;
     }
@@ -39,14 +43,8 @@ public class ReceiveClosureInstr extends Instr implements ResultInstr, FixedArit
     }
 
     @Override
-    public boolean computeScopeFlags(IRScope scope) {
-        scope.getFlags().add(IRFlags.RECEIVES_CLOSURE_ARG);
-        return true;
-    }
-
-    @Override
     public Instr clone(CloneInfo info) {
-        if (info instanceof SimpleCloneInfo) return new ReceiveClosureInstr(info.getRenamedVariable(result));
+        if (info instanceof SimpleCloneInfo) return new LoadImplicitClosureInstr(info.getRenamedVariable(result));
 
         // SSS FIXME: This code below is for inlining and is untested.
 
@@ -61,6 +59,6 @@ public class ReceiveClosureInstr extends Instr implements ResultInstr, FixedArit
 
     @Override
     public void visit(IRVisitor visitor) {
-        visitor.ReceiveClosureInstr(this);
+        visitor.LoadImplicitClosure(this);
     }
 }
