@@ -799,7 +799,8 @@ public class IRRuntimeHelpers {
 
         // SSS FIXME: Can we use an internal delete here?
         // Enebo FIXME: Delete seems wrong if we are doing this for duplication purposes.
-        return keywordArguments.delete(context, keywordName, Block.NULL_BLOCK);
+        RubyHash keywordArgumentsDup = (RubyHash) keywordArguments.dup(context);
+        return keywordArgumentsDup.delete(context, keywordName, Block.NULL_BLOCK);
     }
 
     public static IRubyObject receiveKeywordRestArg(ThreadContext context, IRubyObject[] args, int required, boolean keywordArgumentSupplied) {
